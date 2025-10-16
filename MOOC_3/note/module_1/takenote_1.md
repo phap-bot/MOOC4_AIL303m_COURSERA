@@ -1,265 +1,244 @@
-Machine Learning (ML) Overview
+Introduction to Unsupervised Learning
 
-Machine Learning (ML) allows computers to learn from data rather than relying on explicitly programmed instructions.
+Definition:
+Unsupervised learning refers to algorithms that work without labeled outcomes, aiming to discover hidden structures or natural groupings within data.
 
-In traditional statistics, we understand the underlying process → we can build a model that fits it.
+Main Categories:
+<img width="893" height="419" alt="image" src="https://github.com/user-attachments/assets/ebeead75-23c0-4e2d-a52b-c7aec64a2306" />
 
-In machine learning, the process is often unknown or too complex → the algorithm learns the relationship from data (function approximation).
+Clustering: Divides data into groups based on similarity.
 
-<img width="474" height="339" alt="image" src="https://github.com/user-attachments/assets/80b792ee-7674-4120-8df1-eb9d0a2b19bd" />
+Dimensionality Reduction: Reduces the number of features while preserving most information.
 
+Key Algorithms:
 
-Caption: Comparison between traditional modeling and machine learning — ML learns patterns directly from data.
+Clustering: K-Means, Hierarchical, DBSCAN, Mean Shift.
 
-Artificial Intelligence (AI) – broader concept
+Dimensionality Reduction: PCA, NMF.
 
-Based on Russell & Norvig’s four quadrants:
+Curse of Dimensionality:
+When the number of features increases:
 
-Rows: thinking vs acting
-Columns: human-like vs rational
+Noise and spurious correlations appear.
 
-Machine Learning fits in the “thinking” area (machines that learn → can reason, decide, act).
+More data is required to maintain coverage.
 
-Depending on the goal:
+Computation slows down and outliers increase.
 
-Marketing → simulate human thinking (how people react).
+Solution:
+Apply dimensionality reduction to:
 
-Supply chain → aim for rational thinking (optimize decisions).
-<img width="474" height="266" alt="image" src="https://github.com/user-attachments/assets/3d8a0843-612b-4779-8003-0e0edfe122de" />
+Common Use Cases of Unsupervised Learning (Clustering & Dimensionality Reduction)
+<img width="815" height="511" alt="image" src="https://github.com/user-attachments/assets/1cfc0594-0d70-4df4-b925-0d7f71036586" />
 
-Caption: Russell & Norvig’s AI framework – where Machine Learning fits among “thinking” systems.
+Clustering – Main Applications:
 
-Key Idea – Learning as the Core
+Classification for Unlabeled Data:
+Used when class labels are missing — helps group similar items (e.g., detect spam or review types).
 
-“Learning” is the foundation of all intelligent behavior — from decision-making to perception and reasoning.
+Anomaly Detection:
+Identifies unusual patterns, such as irregular credit card transactions that may indicate fraud.
 
-<img width="474" height="330" alt="image" src="https://github.com/user-attachments/assets/b737f531-11f8-4bba-8195-2d1a78c8b1e5" />
+Customer Segmentation:
+Groups customers by behavior or demographics (e.g., visit frequency, spending habits, life stage) to guide marketing strategies.
 
+Improving Supervised Models:
+Clustering can divide data into subgroups; separate models trained on each segment can improve prediction accuracy.
 
-Caption: The learning cycle – Data → Train → Predict → Improve.
+Dimensionality Reduction – Main Applications:
 
-Model Concept
+Commonly used in image processing and computer vision to compress high-resolution images while retaining key information.
 
-A model is a simplified representation of something larger (like a map of a territory).
+PCA (Principal Component Analysis) helps remove noise, extract essential features, and speed up computations.
+<img width="853" height="517" alt="image" src="https://github.com/user-attachments/assets/7f971ecc-ad49-4651-ba09-f2083c9ed787" />
 
-A good model:
+Simplify models and avoid overfitting.
 
-Omits unimportant details.
+Improve speed and interpretability.
 
-Keeps essential relationships and structures.
+Introduction to Clustering Example
+<img width="768" height="456" alt="image" src="https://github.com/user-attachments/assets/5119eaf4-ced5-47e2-89b2-129dec2857a7" />
 
-Balances complexity reduction and information preservation.
 
-Example: a map shows borders and water bodies but not every landmark — enough to understand spatial relations.
+To introduce the idea of clustering, we begin with a simple example:
+A company wants to segment its customers using one feature — the number of visits to the website.
 
-<img width="474" height="275" alt="image" src="https://github.com/user-attachments/assets/d43eb2f8-1826-4414-8f49-bd07a18b7b17" />
+By applying clustering, we can divide these customers into groups based on their visit frequency:
 
+If we choose two clusters, the data splits into two distinct groups — for example, low-activity and high-activity users.
 
-Caption: A model captures the key structure of reality while omitting unnecessary complexity.
+If we select three clusters, we may get an additional medium-activity group.
 
-Applications of ML in Daily Life
+Similarly, choosing five clusters would divide the data into even smaller, more specific segments.
 
-Spam filtering (classify emails).
+The visual separation of these groups is intuitive, but the goal of clustering is to formalize this grouping mathematically and algorithmically, allowing a model to determine the best cluster boundaries automatically.
 
-Web search ranking.
+In upcoming lessons, we will:
 
-Route optimization (logistics).
+Learn how clustering algorithms work internally,
 
-Fraud detection.
+Understand how to decide the appropriate number of clusters (K),
+Introduction to the K-Means Algorithm
+<img width="883" height="568" alt="image" src="https://github.com/user-attachments/assets/5f79365f-d00f-4221-a046-deb97bbd380d" />
 
-Movie recommendation systems.
 
-Many more — increasingly common and ongoing.
-1. Parameters vs. Hyperparameters
+K-Means is one of the most widely used unsupervised learning algorithms for clustering. It groups data points into a predefined number of clusters (K) based on feature similarity.
 
-Parameters (fit parameters):
-→ Values learned directly from data during training (e.g., regression coefficients β₀, β₁, … in linear regression).
+In this example, we use two features — number of visits and recency (how recently a customer visited).
+Visually, the data appears to form two clusters, but K-Means helps us find these clusters algorithmically through an iterative process.
+<img width="869" height="554" alt="image" src="https://github.com/user-attachments/assets/60a18a80-d3dd-4901-92e9-eb2fd15b4e1a" />
 
-Hyperparameters:
-→ Settings chosen before training that control the model’s behavior (e.g., learning rate, tree depth, number of neighbors).
-→ Not learned from data, but they affect how the model learns.
+How K-Means Works: Step by Step
 
-2. Two Main Types of Supervised Learning
+Initialization:
+Choose K random points as initial centroids (cluster centers).
+Example: two centroids for K=2 — one pink, one blue.
 
-Regression: Predict numeric / continuous outcomes.
-→ Examples: stock prices, box office revenue, geographic coordinates.
+Assignment Step:
+For each data point, calculate the distance (usually Euclidean) to each centroid and assign it to the nearest cluster.
+<img width="926" height="517" alt="image" src="https://github.com/user-attachments/assets/c044cc32-527b-468e-a5e8-31b30d14a653" />
 
-Classification: Predict categorical outcomes.
-→ Examples:
+Update Step:
+Recalculate the centroid position for each cluster by taking the mean of all points within that cluster.
 
-Face recognition → which person?
+Iteration:
+Repeat the assignment and update steps until cluster assignments no longer change — this is called convergence.
 
-Customer churn → churn or not churn?
+Key Points
 
-Next word prediction → which word next?
+Convergence:
+Occurs when centroids stop moving; clusters are now stable.
 
-3. Supervised Learning Framework
+Multiple Solutions:
+K-Means is sensitive to initial centroid positions — different random starting points can lead to different final clusters (local minima).
 
-Equation structure:
+Scalability:
+The process can be extended to more clusters (e.g., 3 or 5), but the algorithm’s effectiveness depends on choosing an appropriate value for K.
 
-<img width="1602" height="734" alt="image" src="https://github.com/user-attachments/assets/a7182244-8a58-4548-9e7c-9fe4292b0363" />
+Improving K-Means Initialization (K-Means++)<img width="885" height="522" alt="image" src="https://github.com/user-attachments/assets/38497786-321a-4cf7-bed9-200ae8ef22db" />
 
 
-X: Input features.
+When running the K-Means algorithm, we may get different cluster results each time.
+This happens because the algorithm starts with random initial centroids, and different starting points can lead to different final groupings (local optima).
 
-Ω (Omega): Model parameters (learned).
+To address this issue, we need:
 
-f(·): The ML model (e.g., linear regressor, decision tree).
+A method to evaluate which clustering result is best.
 
-yₚ: Predicted output.
+A smarter initialization strategy to improve convergence and avoid poor solutions.
 
-The goal is to learn parameters Ω that best map X → y.
+Problem: Random Initialization
 
-4. Training Process
+Randomly chosen centroids can start too close to each other.
 
-Use past (labeled) data → find parameters that best fit.
+When this happens, clusters can overlap or converge to non-optimal boundaries.
 
-Each training sample (Xᵢ, yᵢ) helps the model learn the mapping.
-<img width="1710" height="974" alt="image" src="https://github.com/user-attachments/assets/48804ace-8743-4615-b05c-7e43b4769e80" />
+Solution: K-Means++ Initialization
 
+K-Means++ improves centroid initialization by spreading them out before starting iterations.
 
-More data → better estimation of underlying patterns.
+Steps:<img width="922" height="532" alt="image" src="https://github.com/user-attachments/assets/6a06b781-b0b3-4e6a-87f4-193fe531d8cb" />
 
-After training → use model on new, unseen data for prediction.
 
-5. Avoiding Overfitting
+Choose the first centroid randomly.
 
-Don’t train on all historical data → model may memorize specific cases (e.g., “Customer named Daniel Mandel will churn”).
+For the next centroid, compute the distance squared from each data point to the nearest chosen centroid.
 
-Split dataset:
+Select the next centroid with probability proportional to that squared distance — points farther away are more likely to be chosen.
 
-Training set → learn parameters.
+Repeat this process until K centroids are selected.
 
-Test/Validation set → check generalization ability.
+Each new centroid is chosen to be far from all previously selected centroids (using the minimum distance rule).
 
-Goal: balance between fitting past data and generalizing to future data.
+This ensures that:
 
-6. Loss Function and Optimization
+Centroids start far apart.
 
-Loss function (J(y, yₚ)) → measures how far prediction yₚ is from actual y.
+The algorithm is less likely to get stuck in a local optimum.
 
-Training = minimizing loss (i.e., reducing prediction error).
+Results are more stable and accurate across runs.
 
-Optimization algorithm updates parameters Ω to minimize J.
-→ Example: Gradient Descent.
+And start with our first algorithm: K-Means Clustering.
+General Workflow:
+Unlabeled data → Fit unsupervised model → Extract structure or clusters → Apply to new data.
+Choosing the Right Number of Clusters (K) in K-Means
 
-Interpretation vs. Prediction
+After understanding how K-Means works, the next key question is:
+👉 How do we choose the correct number of clusters (K)?
+<img width="740" height="351" alt="image" src="https://github.com/user-attachments/assets/950706d4-74f6-42e8-bd69-a6aa6e3e6972" />
 
-In supervised learning, there are two main approaches:
-→ Interpretation: understanding the mechanism and relationships between variables.
-→ Prediction: focusing on maximizing predictive accuracy, even if the model is less interpretable.
+1. Fixed Number of Clusters
 
-1. When the goal is Interpretation
+Sometimes, K is predetermined by business or technical needs:
 
-Objective: gain insights from data — understand which features influence the outcome the most.
+Example: A computer with 4 cores → set K = 4
 
-Focus on model parameters to interpret how the system behaves.
+A company wants 10 customer groups for marketing → K = 10
 
-Usually prefer simpler, more transparent models (e.g., linear regression, logistic regression, shallow decision trees).
+A research interface divides topics into 20 categories → K = 20
 
-Optimize for interpretability, not necessarily the best predictive score.
+However, in many real-world cases, the optimal number of clusters is unknown, so we must estimate it using evaluation metrics.
 
-Examples:
+2. Metrics for Evaluating Cluster Quality
+(a) Inertia
 
-Analyzing customer demographics to understand factors affecting loyalty.
+Definition: The total sum of squared distances between each point and its assigned cluster centroid.
 
-Identifying which safety features reduce accidents most effectively.
+Measures how tightly the points are grouped around their centroids.
 
-Evaluating how marketing budget impacts movie revenue.
+Lower inertia = better clustering (tighter, more compact groups).
 
-2. When the goal is Prediction
+Drawback: Inertia increases automatically as more points are added, even if those points fit well.
 
-Focus on how well predictions match actual values (ŷ vs. y).
+(b) Distortion
 
-Evaluate using performance metrics (accuracy, precision, recall, RMSE, etc.).
+Definition: The average of squared distances from points to their cluster centroid.
 
-Interpretability is less important — models may become “black boxes” (e.g., deep learning).
+Also favors tighter clusters but is not sensitive to the number of points.
 
-Goal: get the most accurate prediction, even if we don’t fully understand why it works.
+Useful when similarity between points within clusters matters more than equal cluster size.
 
-Examples:
+In short:
 
-Predicting whether a customer will churn.
+Use inertia if you want clusters of similar size.
 
-Predicting credit default risk.
+Use distortion if you care more about internal similarity.
 
-Forecasting future purchases based on transaction history.
+Using Inertia & the Elbow Method to Choose K in K-Means
+<img width="890" height="528" alt="image" src="https://github.com/user-attachments/assets/9ce3db99-422d-4d9d-9593-bc47fc02a4e5" />
 
-3. Trade-off: Interpretability vs. Predictive Power
 
-Simple models → easier to explain but often less accurate.
+Once we understand inertia and distortion, we can use them to determine the optimal number of clusters (K) in K-Means through a method called the Elbow Method.
 
-Complex models → higher predictive performance but harder to interpret.
+1. Why We Need the Elbow Method
 
-The choice depends on the business objective:
+As we increase K, the inertia (or distortion) — which measures the average distance of points to their cluster centroids — will always decrease.
 
-If decisions require reasoning and justification → prioritize interpretability.
+This happens because more clusters mean smaller groups, and points are naturally closer to their centroids.
 
-If accuracy is the main goal → prioritize prediction.
-<img width="1102" height="508" alt="image" src="https://github.com/user-attachments/assets/b3adc5b2-2552-4596-bf99-141cdc381bbf" />
+In the extreme case where each point is its own cluster, the inertia becomes 0, which is meaningless.
 
-Notes – Supervised Machine Learning (Part 4): Linear Regression
+So, we need a way to find the balance point — where adding more clusters doesn’t significantly improve the fit.
 
-1. Introduction
-<img width="1060" height="473" alt="image" src="https://github.com/user-attachments/assets/230e10ec-e12e-40d0-b3ad-61f6fe352e72" />
+2. The Elbow Method
 
+We plot number of clusters (K) on the x-axis and inertia/distortion on the y-axis.
 
-First model in supervised learning: Linear Regression.
+As K increases, the curve drops sharply at first, then levels off.
 
-Learning goals:
+The “elbow point” — where the rate of decrease slows dramatically — indicates the optimal K.
+This is where we achieve a good balance between model accuracy and simplicity.
 
-Understand how linear regression is built.
+🧠 Interpretation:
 
-Learn how coefficients are chosen to fit data.
+Before the elbow → adding clusters greatly improves the model.
 
-Understand how error (loss) is measured — especially Mean Squared Error (MSE).
+After the elbow → improvement becomes marginal, so extra clusters only add complexity.
 
-2. Example: Predicting Movie Revenue from Marketing Budget
+Both inertia and distortion can be used for this:
 
-Dataset: each movie has
+Inertia favors balanced cluster sizes.
 
-Input (X): marketing budget
+Distortion focuses on similarity within clusters.
 
-Target (Y): box office revenue
-
-Goal: find the best-fit line
-
-<img width="509" height="367" alt="image" src="https://github.com/user-attachments/assets/f5db9988-e428-4418-bc8c-c83f49bd3a24" />
-
-where
-
-β₀ (intercept): revenue when marketing = 0
-
-β₁ (slope): how much revenue increases per extra dollar spent on marketing
-
-We choose β₀ and β₁ to minimize the total error between predicted and actual Y.
-
-Error (residual):
-<img width="1102" height="401" alt="image" src="https://github.com/user-attachments/assets/4dd58cc6-3621-4053-b47c-eae470a95eeb" />
-
-	​
-
-
-It measures the distance between a data point and the fitted line.
-
-The “best” line is the one with smallest total distance between all actual points and the line.
-
-4. Measuring Error
-
-Error can be positive or negative → need a measure of magnitude (distance).
-
-Two main norms:
-
-L1 norm: absolute error (|ŷ − y|)
-
-L2 norm: squared error ((ŷ − y)²)
-
-Linear regression typically uses L2 norm → Mean Squared Error (MSE):
-
-𝑀
-
-Sometimes written as
-<img width="1014" height="400" alt="image" src="https://github.com/user-attachments/assets/6230d5e1-10cb-4523-817d-c05d3c3e9d7d" />
-
-
-The ½ term simplifies derivative calculations, but both forms are equivalent in optimization.
+<img width="883" height="528" alt="image" src="https://github.com/user-attachments/assets/d1b9ae8a-565a-4dc9-a061-a3502a2f78aa" />
