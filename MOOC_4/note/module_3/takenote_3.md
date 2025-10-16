@@ -1,143 +1,213 @@
-<img width="1013" height="561" alt="image" src="https://github.com/user-attachments/assets/ad840be8-5394-4ab6-b0e6-984fbe74f2a5" />
-Notes – Supervised Machine Learning (Part 8): Cross-Validation & Model Complexity
+<img width="816" height="546" alt="image" src="https://github.com/user-attachments/assets/8b3b472a-df05-4c11-9747-bd675f502a22" />
+Hierarchical Agglomerative Clustering (HAC)
 
-1. Why Cross-Validation
+Hierarchical Agglomerative Clustering (HAC) is a bottom-up clustering algorithm that builds a hierarchy of clusters by repeatedly merging the closest pairs of points or clusters until only one large cluster remains—or until a chosen stopping point.
 
-Instead of relying on a single train/test split, we perform multiple splits to test the model’s consistency.
+1. Key Idea
 
-The dataset is divided into several pairs of training and validation sets.
+HAC starts with each data point as its own cluster.
 
-The model is trained and evaluated on each split → errors are averaged to get a more reliable performance estimate.
+It then merges the two closest clusters step by step based on a chosen distance metric (e.g., Euclidean, Manhattan, Cosine).
 
-This reduces the risk of a model appearing good by chance on one lucky test set.
+This process continues iteratively, forming larger and larger clusters until:
 
-2. Process Overview
+All points are merged into one single cluster, or
 
-Split data into multiple folds (train/test pairs).
+A stopping criterion (e.g., desired number of clusters) is reached.
 
-For each fold:
+2. Step-by-Step Process
 
-Train on the training portion.
+Initialize: Treat every point as an individual cluster.
 
-Evaluate on the validation portion.
+Find closest pair: Identify the two clusters (or points) with the smallest distance.
 
-Record the error (e.g., MSE).
+Merge: Combine them into a single cluster.
 
-Average all validation errors to get the final performance score.
+Recalculate distances: Compute distances between the new cluster and all other clusters.
 
-Each sample is used for both training and testing at different times → more statistically significant result.
+This depends on a linkage criterion (see below).
 
-3. Terminology
-<img width="1085" height="584" alt="image" src="https://github.com/user-attachments/assets/183cea97-8a09-42ed-9584-b4ebd80ece0f" />
+Repeat: Continue merging until reaching the desired number of clusters or one final cluster.
 
+3. Linkage Criteria (How Distance Between Clusters Is Defined)
 
-Training data: used to learn model parameters.
+When determining how far apart two clusters are, HAC can use different linkage methods:
 
-Validation data: temporary “test-like” subset used to tune and compare models.
+Single linkage: Minimum distance between any two points (one from each cluster).
 
-Test data: kept aside until the end — used only for final evaluation after modeling is complete.
+Complete linkage: Maximum distance between any two points.
 
-4. Complexity vs. Error Relationship
-<img width="1242" height="601" alt="image" src="https://github.com/user-attachments/assets/cfe226bc-c035-4e62-9483-665cc7afe3fd" />
+Average linkage: Mean of all pairwise distances between points in the two clusters.
 
-Training error always decreases with higher model complexity.
+Centroid linkage: Distance between the centroids (average positions) of the clusters.
 
-Validation error decreases up to a point, then rises again (overfitting).
+The choice of linkage affects the final cluster shapes:
 
-Curve interpretation:
+Single linkage → may create “chain-like” clusters.
 
-Left side: underfitting — model too simple, high error on both training and validation.
+Complete linkage → prefers compact, spherical clusters.
 
-Middle (sweet spot): balanced — low training and validation error (good generalization).
+Average linkage → balances both.
 
-Right side: overfitting — low training error, high validation error.
+<img width="811" height="497" alt="image" src="https://github.com/user-attachments/assets/64bde95f-bf19-44f8-a17d-89f53743df9e" />
+Hierarchical Clustering: Stopping Criteria & Linkage Methods
 
-The goal: find the “just right” (Goldilocks) point where the model is complex enough to capture patterns but still generalizes well.
+This section expands on how to decide when to stop merging clusters in hierarchical agglomerative clustering and introduces the main linkage methods used to calculate distances between clusters.
 
-5. Common Cross-Validation Methods
+1. Determining When to Stop Merging
 
-K-Fold Cross-Validation:
+In hierarchical clustering, we start by merging the closest points and clusters, but we need a rule for when to stop combining them.
 
-Split data into K folds (e.g., K=4).
+At each step, we can measure the average distance between all points within each cluster.
 
-Train on K-1 folds, test on the remaining fold, repeat K times.
+A threshold (gray line) is set for this average cluster distance.
 
-Average performance across folds.
+The algorithm continues merging clusters until all average cluster distances exceed this threshold.
 
-Leave-One-Out Cross-Validation (LOOCV):
+When the minimum average cluster distance rises above the threshold, the algorithm converges — meaning we’ve reached the final clustering structure.
 
-Each observation is used once as the test set; all others are training.
+This stopping criterion ensures clusters remain tight and well-separated before merging further.
+<img width="844" height="475" alt="image" src="https://github.com/user-attachments/assets/929abdca-d956-467f-91d0-0fb647d1007c" />
 
-Provides many test sets but is computationally expensive.
+2. The Need for Linkage Criteria
 
-Stratified K-Fold:
+When merging clusters, we must define how to measure the distance between two clusters — not just between individual points.
+These definitions are called linkage methods, and they greatly affect the shape and structure of the resulting clusters.
+| **Linkage Type**     | **Definition**                                                                                             | **Pros**                                                                                                        | **Cons**                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Single Linkage**   | Distance = *minimum pairwise distance* between any two points (one from each cluster).                     | - Captures fine-grained structure.<br>- Good for detecting elongated or irregular clusters.                     | - Sensitive to noise/outliers.<br>- Can produce “chaining effect” (clusters connected by single close points). |
+| **Complete Linkage** | Distance = *maximum pairwise distance* between any two points in the clusters.                             | - Produces compact, well-separated clusters.<br>- Less sensitive to noise.                                      | - Can break apart large clusters.<br>- May underestimate cluster similarity.                                   |
+| **Average Linkage**  | Distance = *average of all pairwise distances* between points in both clusters.                            | - Balances single and complete linkage.<br>- Reasonably stable.                                                 | - Still somewhat affected by outliers.<br>- May blur cluster boundaries.                                       |
+| **Ward Linkage**     | Distance = *increase in total inertia* (sum of squared distances to centroids) if two clusters are merged. | - Minimizes total variance within clusters.<br>- Often yields spherical, compact clusters (similar to K-Means). | - Sensitive to scale and centroid-based assumption (works best with Euclidean distance).                       |
 
-Used for categorical outcomes.
 
-Maintains the same class proportions (e.g., 80% true / 20% false) in every fold.
+HAC results are often visualized using a dendrogram — a tree-like diagram showing how clusters merge at different distance levels.
+By “cutting” the dendrogram at a certain height, we can choose the desired number of clusters (K).
+<img width="740" height="476" alt="image" src="https://github.com/user-attachments/assets/d8427aca-cd09-4940-82ce-cb80c3192bde" />
+Introduction to DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
 
-Ensures balanced representation across splits.
+DBSCAN is a density-based unsupervised learning algorithm designed to identify clusters of arbitrary shapes and detect outliers (noise) — making it distinct from methods like K-Means that simply partition data.
 
-6. Implementation in Python (scikit-learn)
-from sklearn.model_selection import cross_val_score, KFold, StratifiedKFold
-from sklearn.linear_model import LinearRegression
+1. Core Concept
 
-model = LinearRegression()
-scores = cross_val_score(
-    model,
-    X, Y,
-    cv=4,  # number of folds
-    scoring='neg_mean_squared_error'  # negative MSE so higher = better
-)
+DBSCAN groups together points that are closely packed (dense regions) and marks points that lie alone in low-density regions as noise.
 
+It works well for data that contains outliers or irregularly shaped clusters.
 
-cross_val_score automatically performs training/testing across folds and averages the results.
+Unlike partitioning methods, DBSCAN can ignore noise instead of forcing every point into a cluster.
 
-For stratified splits, pass a StratifiedKFold object as the cv argument.
+2. How DBSCAN Works
 
-7. Key Takeaways
+Randomly pick a starting point in the dataset.
 
-Cross-validation provides a more robust estimate of model performance.
+Check how many points fall within a specified distance (ε, epsilon) around that point — this defines its neighborhood.
 
-Prevents misleading results from a single random split.
+If the number of neighboring points is greater than or equal to a minimum number of samples (MinPts), that point becomes a core point.
 
-Always monitor both training and validation errors to find the right model complexity.
+The algorithm expands the cluster by recursively including all nearby points within ε of any current cluster members.
 
-Core goal: balance bias and variance to achieve strong generalization on unseen data.
+Points that are within ε of a core point but do not have enough neighbors themselves are called border (density-reachable) points.
 
-Summary/Review
-Cross Validation
+Points that are not within ε of any core point are labeled as noise.
 
-The three most common cross validation approaches are:
+The process repeats until all points are classified as either core, border, or noise.
+Key Input Parameters
+| **Parameter**                    | **Meaning**                                                                               | **Effect**                                                                                                             |
+| -------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Distance Metric**              | Defines similarity between points (e.g., Euclidean, Manhattan, Cosine).                   | Affects cluster shape and boundary.                                                                                    |
+| **Epsilon (ε)**                  | The maximum distance between two points for one to be considered a neighbor of the other. | Controls **cluster tightness** — smaller ε → more clusters, larger ε → fewer clusters.                                 |
+| **MinPts (N_clu / min_samples)** | Minimum number of points required to form a dense region (including the point itself).    | Controls **cluster density sensitivity** — small values detect smaller clusters, large values require denser clusters. |
+ Types of Points in DBSCAN
+| **Type**                             | **Definition**                                            | **Role in Clustering**                             |
+| ------------------------------------ | --------------------------------------------------------- | -------------------------------------------------- |
+| **Core Point**                       | Has ≥ MinPts neighbors within ε distance.                 | Forms the center of a cluster.                     |
+| **Border (Density-Reachable) Point** | Lies within ε of a core point but has < MinPts neighbors. | Belongs to a cluster but is not a core.            |
+| **Noise (Outlier)**                  | Not within ε of any core point.                           | Ignored by the model, not assigned to any cluster. |
 
-k-fold cross validation
+<img width="1093" height="641" alt="image" src="https://github.com/user-attachments/assets/5cdb2f4c-13c4-48e6-9e1c-feea3da00263" />
+DBSCAN Visualization, Workflow & Python Implementation
 
-leave one out cross validation
+This section visually and practically explains how DBSCAN (Density-Based Spatial Clustering of Applications with Noise) works, how it identifies core, border, and outlier points, and how to implement it using Python.
 
-stratified cross validation
+1. How DBSCAN Works (Step-by-Step Visual Logic)
 
+Start at a random point in the dataset.
 
-Cross validation method involves dividing the dataset into 3 parts:
+Draw a circle around it with radius ε (epsilon) — the distance threshold.
 
-training set - is a portion of the data used for training the model
+Example: ε = 1.75.
 
-validation set - is a portion of the data used to optimize the hyper-parameters of the model
+Check neighbors inside the ε-radius.
 
-test set - is a portion of the data used to evaluate the model 
+If a point has at least MinPts (n_clu) neighbors (including itself), it becomes a core point.
 
+All points within ε of a core point are added to the same cluster.
 
-Cross Validation Syntax
+Expand the cluster.
+<img width="1032" height="605" alt="image" src="https://github.com/user-attachments/assets/0467f13a-0383-43c4-a1b4-25a3052f2d18" />
 
-`Scikit Learn` library contains many methods that can perform the splitting of the data into training, testing and validation sets. The most popular methods that we covered in this module are:
+Each new point inside the cluster is checked in the same way — if it also has ≥ MinPts neighbors, it becomes another core point.
 
-*   train_test_split - creates a single split into train and test sets
+Points within ε of any core point, even if they are not cores themselves, become border points (density-reachable).
 
-*   K-fold - creates number of k-fold splits, allowing cross validation
+When no more points can be added, start a new cluster from another unvisited point.
 
-*   cross_val_score - evaluates model's score through cross validation
+Outliers (noise) are any points that do not fall within ε of any core point.
 
-*   cross_val_predict – produces the out-of-bag prediction for each row
+These are labeled as noise and not assigned to any cluster.
+| **Type**                             | **Definition**                                   | **Example in Visualization**                     |
+| ------------------------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| **Core Point**                       | Has ≥ MinPts neighbors within ε.                 | Dark-colored points in the dense region.         |
+| **Border (Density-Reachable) Point** | Within ε of a core point but < MinPts neighbors. | Lighter-colored points near cluster edges.       |
+| **Noise Point (Outlier)**            | Not within ε of any core point.                  | Gray points — isolated or distant from clusters. |
 
-*   GridSearchCV – scans over parameters to select the best hyperparameter set with the best     
 
-     out-of-sample score
+Mean Shift Clustering Algorithm
+
+The Mean Shift algorithm is the final clustering method covered in the unsupervised learning section. It identifies clusters by shifting centroids toward areas of highest data density, without needing to predefine the number of clusters.
+
+1. Core Idea
+
+Mean Shift is similar to K-Means, but instead of using the mean of assigned points as the cluster center,
+it moves each centroid toward the densest region (highest data density) within a given window (bandwidth).
+
+It is a density-based, non-parametric, and model-free algorithm.
+
+2. Step-by-Step Algorithm
+
+Initialize:
+Select a random starting point and define a window (bandwidth) that determines neighborhood size.
+
+Compute the weighted mean:
+
+For all points inside the window, calculate the weighted average of their positions.
+
+Points closer to the center get higher weights (using a kernel function like RBF/Gaussian).
+
+Shift the window:
+Move the window so its center aligns with this new weighted mean.
+
+Repeat until convergence:
+Continue shifting until the mean (centroid) stops moving, meaning the local maximum density (mode) is reached.
+<img width="423" height="411" alt="image" src="https://github.com/user-attachments/assets/68ac20e3-1e3d-4d73-a502-f6b7800e898a" />
+
+Repeat for all points:
+All points that lead to the same local maximum are grouped into the same cluster.
+Kernel Function (Weighting Mechanism)
+
+The kernel assigns importance to points based on their distance from the current mean.
+
+Most common: RBF (Radial Basis Function) or Gaussian kernel.
+
+Points close to the center → higher weight.
+
+Points far away → lower weight.
+
+Mathematically:<img width="304" height="114" alt="image" src="https://github.com/user-attachments/assets/3c98013b-9202-41af-a0da-0742afccbde5" />
+Where K is the kernel function, and m(x) is the new shifted mean.
+<img width="1002" height="589" alt="image" src="https://github.com/user-attachments/assets/0205745e-ac98-4ad6-9301-72a7367fbd1a" />
+
+Comparison of All Clustering Algorithms
+
+This final section reviews and compares the main clustering algorithms covered — K-Means, Mean Shift, Hierarchical (Ward), and DBSCAN — including their advantages, limitations, scalability, and best use cases in real-world business and data applications.
+<img width="1035" height="506" alt="image" src="https://github.com/user-attachments/assets/d1c27725-69c7-4af3-aa42-c7de11cf656a" />
