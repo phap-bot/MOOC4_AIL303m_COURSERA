@@ -1,7 +1,5 @@
-Đúng 15/16 câu.
-<img width="975" height="468" alt="image" src="https://github.com/user-attachments/assets/13fa1573-5260-450f-8837-826a6ea97bdc" />
-<img width="975" height="545" alt="image" src="https://github.com/user-attachments/assets/1935c58f-014d-4e16-89f0-7e6b09c126e9" />
-<img width="975" height="468" alt="image" src="https://github.com/user-attachments/assets/382d4814-1463-48a6-81b9-1c45e428ef9d" />
-<img width="975" height="471" alt="image" src="https://github.com/user-attachments/assets/b4891f72-8c92-4cdf-8d2d-3fbf9c7d5c37" />
-<img width="975" height="468" alt="image" src="https://github.com/user-attachments/assets/fc71880e-549c-47a1-b945-f0df902a1653" />
-<img width="975" height="468" alt="image" src="https://github.com/user-attachments/assets/66d0bb51-8bd3-4fab-8487-06810a5d7650" />
+Đúng 11/11 câu.
+<img width="2390" height="1186" alt="Screenshot_2025-10-16_17-03-04" src="https://github.com/user-attachments/assets/e1c59210-d2e0-4dbc-905d-80feccb90be0" />
+<img width="2390" height="1186" alt="Screenshot_2025-10-16_17-04-18" src="https://github.com/user-attachments/assets/6b90c1a0-f496-4ee6-9ccc-09b19f7abb98" />
+<img width="1818" height="943" alt="image" src="https://github.com/user-attachments/assets/8fd319a1-2ac7-4c68-965a-213d262c39b6" />
+<img width="1861" height="599" alt="image" src="https://github.com/user-attachments/assets/9f2c9c30-fdcc-4b05-a8f9-611f80d1074e" />
