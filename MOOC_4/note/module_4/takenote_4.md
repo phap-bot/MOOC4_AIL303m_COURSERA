@@ -1,273 +1,161 @@
-Notes – Supervised Machine Learning (Part 9): Bias–Variance Trade-off
+Introduction to Dimensionality Reduction & PCA (Part 1)
 
-1. Overview
+This section introduces a new branch of unsupervised learning called dimensionality reduction, focusing on reducing the number of features (dimensions) in a dataset while preserving as much useful information as possible.
+<img width="989" height="609" alt="image" src="https://github.com/user-attachments/assets/747388fb-333f-4a93-a071-3ba882cae1d2" />
+1. Why Dimensionality Reduction Matters
 
-This section explains how model complexity, bias, and variance interact to determine model performance.
+Real-world business and enterprise datasets often have many features (high-dimensional data).
 
-Goal: find the optimal balance between bias, variance, and total error to avoid both underfitting and overfitting.
+As the number of dimensions increases, we encounter the Curse of Dimensionality — meaning:
 
-2. Model Complexity vs. Error
- <img width="890" height="497" alt="image" src="https://github.com/user-attachments/assets/2a900ec7-3737-48ea-b7ff-0081cb63e823" />
+Distance metrics become less meaningful.
 
-Too simple (left side) → both training and test errors are high → underfitting.
+Outliers become more frequent.
 
-Too complex (right side) → training error low but test error high → overfitting.
+Models may perform worse, not better.
 
-Middle (sweet spot) → both training and test errors are relatively low → best generalization.
+Computational cost increases exponentially.
+Example (Intuitive Explanation):
+If one dimension has 10 possible positions:
 
-As complexity increases, training error decreases continuously, but test error follows a U-shaped curve.
-<img width="1079" height="574" alt="image" src="https://github.com/user-attachments/assets/678fd249-01f2-4947-870a-1cdeca1099db" />
+To fill 60% of that space → only 6 observations are needed.
 
+In 2D (10×10 grid) → need 60 observations.
 
-3. Definitions
+In 3D → need 600 observations.
+2. Goals of Dimensionality Reduction
 
-Bias:
+Dimensionality reduction helps to:
 
-The model’s tendency to miss the true relationship between X and Y.
+Simplify models and reduce noise.
 
-High bias → model is too simple or missing key patterns.
+Improve interpretability and visualization.
 
-Associated with underfitting.
+Enhance computational efficiency.
 
-Example behavior: consistent but wrong predictions (systematic error).
+Preserve the core structure and variance of the data.
 
-Variance:
+Two main strategies:
 
-The model’s sensitivity to small fluctuations in the training data.
+Feature Selection: Keep only the most important original features.
 
-High variance → model overreacts to noise.
+Feature Extraction / Transformation: Combine or transform existing features into new ones (e.g., PCA, NMF).
 
-Associated with overfitting.
+3. Introducing PCA (Principal Component Analysis)
 
-Example behavior: predictions change drastically with small data changes.
+PCA = a linear transformation technique that reduces dimensions by creating new features (called principal components) — each being a weighted combination of the original features.
+Example:
 
-4. Visualization (Conceptually)
-<img width="1068" height="591" alt="image" src="https://github.com/user-attachments/assets/85ea7853-5e1f-407c-b401-fd1da74824db" />
+Suppose we have two correlated features:
+ Phone usage
 
+ Data usage
+They form a diagonal line in 2D space — meaning one can almost predict the other.
 
-High Bias, Low Variance: consistent but far from target → misses systematically.
+Step-by-step intuition:
 
-Low Bias, High Variance: sometimes hits target but scattered → unstable predictions.
+Find correlation: The two features are highly correlated, so they contain overlapping information.
 
-High Bias, High Variance: worst case → wrong and inconsistent.
+Project onto a line: Draw a line through the points that captures the direction of maximum variance.
 
-Low Bias, Low Variance: ideal case → accurate and consistent predictions.
+Compute projections: Project all points onto that line — this becomes the new 1D feature.
 
-5. Sources of Model Error
-<img width="988" height="615" alt="image" src="https://github.com/user-attachments/assets/3a28aa5e-b4a2-4b81-b9d0-8c55f8a872b9" />
+Result:
 
+Reduced from 2D → 1D.
 
-Bias Error – due to wrong model assumptions or missing patterns.
+Maintains the most important information (maximum variance).
 
-Variance Error – due to excessive model complexity fitting noise.
+This projection process generalizes:
 
-Irreducible Error – randomness inherent in real-world data; cannot be removed.
+From 3D → 2D, or
 
-Total error = Bias² + Variance + Irreducible error.
+From 100D → 10D, etc.
+4. Conceptual Summary of PCA
+| **Concept**             | **Explanation**                                                            |
+| ----------------------- | -------------------------------------------------------------------------- |
+| **Purpose**             | Reduce feature count while keeping most information.                       |
+| **Transformation Type** | Linear (projects data onto new axes).                                      |
+| **Output**              | New features = *Principal Components* (combinations of original features). |
+| **Selection Rule**      | Choose components that retain the most **variance** in the data.           |
+| **Result**              | Fewer dimensions, but similar data structure and interpretability.         |
+<img width="923" height="501" alt="image" src="https://github.com/user-attachments/assets/f2143a82-d759-407d-af59-e572bb7ab38d" />
+How PCA Works (Linear Principal Component Analysis)
 
-<img width="871" height="575" alt="image" src="https://github.com/user-attachments/assets/9f35b202-9422-4658-8f92-c25dd32ad603" />
+This section explains how PCA (Principal Component Analysis) mathematically reduces dimensionality by projecting data onto new axes (principal components) that capture the maximum variance in the dataset.
+<img width="654" height="414" alt="image" src="https://github.com/user-attachments/assets/1fd58f08-07a8-4c7a-b5e2-76e19061a45d" />
+1. From Two Features → One Principal Component
 
+Starting from two correlated features (e.g.,  phone usage and  data usage),
+PCA projects the data onto a new single axis that captures the most variance.
 
-6. Relationship Between Bias, Variance, and Complexity
+This projection reduces the feature space from 2D → 1D, while keeping most of the information.
 
-As model complexity increases:
+The same principle scales to higher dimensions — e.g., projecting 100 features → 10 key components.
+2. Finding the Right Axes (Principal Components)
 
-Bias decreases (better fit to training data).
+To mathematically find these axes, PCA uses linear algebra — specifically, Singular Value Decomposition (SVD).
 
-Variance increases (less stable, more sensitive to noise).
+Key Idea:
 
-As model complexity decreases:
+The direction of maximum variance is the first principal component (v₁).
 
-Bias increases (misses real patterns).
+The second component (v₂) is orthogonal (perpendicular) to the first and explains the next highest variance.
 
-Variance decreases (more stable but less accurate).
+Each new component is orthogonal to all previous ones.
 
-The bias–variance trade-off lies in finding the point of minimum combined error.
+So, if you imagine your dataset spread across a plane:
 
-7. Key Takeaways
+Projecting onto v₁ preserves most of the information.
 
-Notes – Supervised Machine Learning (Part 10): Regularization & Model Selection
+Projecting onto v₂ would lose information because variance in that direction is small.
+3. The Math Behind PCA – Singular Value Decomposition (SVD)
+The dataset 
+A (size 𝑚×𝑛) can be decomposed as:<img width="166" height="47" alt="image" src="https://github.com/user-attachments/assets/3fd0791c-5558-4646-b71e-1d40808ee977" />
+| **Matrix** | **Meaning**                                   | **Shape**      | **Role**                                        |
+| ---------- | --------------------------------------------- | -------------- | ----------------------------------------------- |
+| ( U )      | Left singular vectors (rotation in m-space)   | ( m \times m ) | Helps align rows                                |
+| ( S )      | Diagonal matrix of singular values            | ( m \times n ) | Represents *importance* (variance strength)     |
+| ( V^T )    | Right singular vectors (principal directions) | ( n \times n ) | Defines new feature axes (principal components) |
+The larger the singular value in 
+𝑆
+S, the more variance that component explains.
+For example:
+If S=[9,5,2], then:
 
-1. Overview
+The first component (v₁) explains the most variance.
 
-Goal: use regularization to control model complexity and balance bias and variance.
+The second (v₂) explains some.
 
-Regularization helps prevent overfitting — when a model fits the training data too closely but fails to generalize.
+The third (v₃) adds little new information.
 
-This section introduces Ridge, Lasso, Elastic Net, and Recursive Feature Elimination (RFE) as tools for managing complexity and selecting important features.
+Summary
+Dimensionality Reduction
+As a result of the curse of dimensionality, too many features can lead to worse performance. Often, data can be represented by fewer dimensions (features). There are two ways to reduce dimensionality:
 
-2. Recap: Complexity vs. Error
+Select a subset of features that are "important"
 
-Increasing complexity → training error ↓, test error ↑ (overfitting).
+Combine features using linear/non-linear transformations
 
-Simpler model → higher bias, lower variance (underfitting).
+Principal Component Analysis
+Principal component analysis (PCA) is a dimensionality reduction technique that creates new features by applying linear transformations on a combination of the original features. The resulting features are called principal components, on which the original data will be projected.
 
-Regularization provides a way to fine-tune complexity without discarding the entire model.
+Each principal component is a vector and are orthogonal to each other. Their relative importance is determined by comparing how much of the variance within the original data they each explain/preserve. 
 
-Underfitting → high bias, low variance → overly simplistic model.
+Singular value decomposition (SVD) enables us to find this information by obtaining the diagonal matrix. Its non-zero entries along the diagonal represent each eigenvector(principal component)'s eigenvalue/length. The bigger the value, the more important the vector.
 
-Overfitting → low bias, high variance → overly complex model.
+*Note: It is important to scale the data prior to applying PCA because distance is an important aspect considered for the algorithm.
 
-The goal is to locate the balance point where total error (bias² + variance) is minimal.
+ Syntax
+ The syntax consists of importing the class containing the method:
 
-Perfect accuracy is impossible due to irreducible noise in real-world data; good modeling accepts small error for better generalization.
+   from sklearn.decomposition import PCA
 
+ creating the instance of the class:
 
-What is Regularization
-<img width="1027" height="462" alt="Screenshot 2025-10-04 234926" src="https://github.com/user-attachments/assets/348e6104-57c9-43d1-968a-0ed9666be438" />
+    pca=PCA(n_components=3)
 
+and fit the instance and create a transformed version of the data:
 
-In standard training, we minimize a cost function such as Mean Squared Error (MSE):
-λ (lambda): regularization strength.
+   X_trans=pca.fit_transform(X_train)  
 
-R(w): penalty function based on parameter size.
-
-Larger λ → stronger penalty → simpler model (higher bias, lower variance).
-
-Smaller λ → weaker penalty → more complex model (lower bias, higher variance).
-
-4. Intuition
-
-Notes – Supervised Machine Learning (Part 11): LASSO, Ridge, and Elastic Net Regularization
-
-1. Overview
-
-Introduces LASSO regression as another regularization technique for linear models.
-
-Builds upon Ridge regression — both control model complexity by adding a penalty to the cost function.
-
-The key difference lies in how the penalty is applied:
-
-Ridge uses the squared values of coefficients (L2 norm).
-
-LASSO uses the absolute values of coefficients (L1 norm).
-
-The combination of both forms the Elastic Net, a hybrid regularization method.
-
-2. Ridge (L2) vs. LASSO (L1)
-Aspect	Ridge Regression (L2)	LASSO Regression (L1)
-Penalty	Sum of squared coefficients	Sum of absolute coefficients
-Effect	Shrinks coefficients smoothly	Shrinks some to zero (feature elimination)
-Feature Selection	No – keeps all features	Yes – automatically removes some features
-Computation Speed	Faster, converges quickly	Slower, due to optimization complexity
-Sensitivity to Outliers	More affected (squares large values)	Less affected (absolute values)
-3. LASSO: Least Absolute Shrinkage and Selection Operator
-
-Adds a L1 penalty term to the cost function:
-
-<img width="1106" height="518" alt="image" src="https://github.com/user-attachments/assets/7d1b9627-7816-4cfd-b2fa-ab2cb1d6c0cb" />
-
-Larger λ → stronger penalty → smaller (or zero) coefficients.
-
-Behavior:
-
-Small λ → weak penalty → model similar to unregularized linear regression.
-
-Large λ → strong penalty → most coefficients forced toward zero (simpler model).
-
-This selective shrinking results in automatic feature selection, improving interpretability.
-
-4. Ridge Recap (L2 Penalty)
-
-Cost function:
-
-<img width="1099" height="459" alt="image" src="https://github.com/user-attachments/assets/029854e4-92f7-4ad6-b3ee-1d4f952a3fcc" />
-​
-
-
-Penalizes large coefficients more aggressively due to squaring.
-
-Shrinks all coefficients but rarely removes any completely.
-
-More computationally efficient and stable than LASSO.
-
-5. Understanding the Effect of λ (Regularization Strength)
-
-
-<img width="1168" height="592" alt="image" src="https://github.com/user-attachments/assets/193faf16-fa94-4034-a74b-37e609881e39" />
-
-λ = 0 → no regularization → model fits training data exactly (risk of overfitting).
-
-λ too high → over-regularization → model too simple, high bias.
-
-λ optimal → balances bias and variance → best generalization on the holdout set.
-
-In LASSO, increasing λ rapidly zeroes out weaker features, while Ridge simply scales them down.
-
-6. Multicollinearity Effects
-
-In datasets with correlated predictors:
-
-LASSO tends to pick one variable and drop the rest.
-
-Ridge keeps all but distributes weight among correlated variables.
-
-During tuning, coefficients may fluctuate temporarily as λ increases before stabilizing.
-
-7. Choosing Between Ridge and LASSO
-
-Use Ridge when:
-
-Many small but relevant predictors exist.
-
-You need stable coefficients and fast computation.
-
-Use LASSO when:
-
-You want feature selection or a sparse model.
-
-Interpretability is important.
-
-Trade-offs:
-
-Ridge → smoother shrinkage, better for continuous relationships.
-
-LASSO → simpler, interpretable models, but slower convergence.
-
-8. Elastic Net (Hybrid Approach)
-
-Combines L1 (LASSO) and L2 (Ridge) penalties:
-
-<img width="1332" height="427" alt="image" src="https://github.com/user-attachments/assets/9a4e360e-f606-4378-885e-3ff7558d2dc4" />
-
-Controlled by two parameters:
-
-λ (regularization strength): overall penalty.
-
-α (mix ratio): proportion of L1 vs. L2 contribution.
-
-α = 1 → pure LASSO
-
-α = 0 → pure Ridge
-
-Benefits:
-
-Balances Ridge’s stability with LASSO’s feature selection.
-
-Handles correlated features better than LASSO alone.
-
-Allows fine-tuning via cross-validation to find optimal λ and α.
-
-9. Summary
-
-Regularization controls overfitting by penalizing large coefficients.
-
-Ridge (L2) → smooth coefficient shrinkage.
-
-LASSO (L1) → selective coefficient elimination.
-
-Elastic Net → hybrid model combining benefits of both.
-
-Choosing the right regularization method depends on goals:
-
-Prediction accuracy: use cross-validation to tune λ and α.
-
-Interpretability: LASSO or Elastic Net preferred.
-
-Computation speed: Ridge preferred.
-
-Regularization discourages large coefficients → limits how much each feature can influence predictions.
-
-This reduces model variance and improves generalization to unseen data.
-
-It acts as an automatic complexity control.
