@@ -4,7 +4,8 @@ This section expands PCA beyond linear transformations — introducing Kernel PC
 1. Why Move Beyond Linear PCA?
 
 Traditional PCA only works with linear relationships.
-![Uploading image.png…]()
+<img width="870" height="563" alt="image" src="https://github.com/user-attachments/assets/829a0d73-f666-4980-9dce-975fd4385713" />
+
 
 Many real-world datasets contain nonlinear patterns (curves, spirals, clusters).
 
