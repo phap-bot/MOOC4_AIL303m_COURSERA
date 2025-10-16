@@ -1,226 +1,107 @@
-Notes – Supervised Machine Learning (Part 5): Train–Test Split & Cross-Validation
+Understanding Distance Metrics in Clustering (Part 1)
 
-1. Purpose of Train/Test Split
-<img width="1631" height="1035" alt="image" src="https://github.com/user-attachments/assets/09e3f8fa-5f3e-4b53-b255-01b403408c2f" />
+Clustering algorithms depend heavily on how we define the distance (or similarity) between data points.
+This section introduces several distance metrics and explains when and why to use each one.
+Learning Goals
 
-We divide our dataset into training and testing subsets.
+In this topic, we focus on:
 
-Training set: used to fit the model and learn parameters.
+Understanding different distance measures used in clustering.
 
-Test set: held out to evaluate performance on unseen data.
+Knowing how these distances affect algorithm behavior and outcomes.
 
-This helps estimate how the model will perform in the real world, not just on data it has already seen.
+Exploring use-cases for each type of metric.
 
-<img width="1853" height="1017" alt="image" src="https://github.com/user-attachments/assets/b47804ce-aabe-4f99-80a7-481698670158" />
+1. Why Distance Matters
+<img width="859" height="503" alt="image" src="https://github.com/user-attachments/assets/98f27b56-53bf-4da8-bda4-7e80a44c74c4" />
 
-2. Overfitting and Generalization
+All clustering methods — like K-Means, DBSCAN, or hierarchical clustering — depend on measuring how “close” or “similar” points are.
+The choice of distance metric directly influences:
 
-If we train on the entire dataset, the model can perfectly “memorize” the data → 100% accuracy on training, but fails on new data.
+How clusters are formed,
 
-Splitting ensures we can detect overfitting — when a model performs well on training but poorly on unseen samples.
+How compact or separate they are,
 
-Goal: achieve a model that generalizes well beyond the training examples.
+And how the algorithm interprets relationships in the data.
 
-3. Data Leakage
+Sometimes, the right metric must be found through empirical testing to see which gives the best performance.
 
-Always ensure training and test sets are independent.
+2. Euclidean Distance (L2 Norm)
 
-If information from the test set “leaks” into training (e.g., duplicate or correlated records), evaluation becomes invalid.
+The most intuitive and common metric (used in K-Means).
 
-Data leakage causes unrealistically high accuracy and poor real-world performance.
+Measures the straight-line distance between two points.
 
-4. Evaluation Process
+Formula:
 
-Train the model on the training set → learn parameters.
+<img width="147" height="61" alt="image" src="https://github.com/user-attachments/assets/f801b060-6f28-4338-a9f9-2db427bd2409" />
 
-Use the model to predict outcomes for the test set.
 
-Compare predictions with the true values (since test data still has known labels).
+It can be extended to more dimensions by squaring the difference for each feature, summing, and taking the square root.
 
-Calculate an error metric (e.g., MSE, accuracy, etc.) to evaluate performance on unseen data.
+Works well in low-dimensional spaces where relationships between points are geometric and continuous.
 
-5. Cross-Validation
+3. Manhattan Distance (L1 Norm)
 
-Extension of the train/test idea — instead of one split, perform multiple splits (e.g., k-fold cross-validation).
+Also known as the city-block distance — you move along grid-like paths rather than diagonally (like city streets).
 
-Train and test the model on different subsets several times → average the performance.
+Formula:
+d=∣x1−x2∣+∣y1−y2∣
 
-Gives a more reliable estimate of real-world model performance.
+Always greater than or equal to Euclidean distance unless points lie on the same axis.
 
-6. Model Complexity vs. Error
+Performs better than Euclidean in high-dimensional datasets, where traditional distance measures struggle to distinguish between points (a problem called the “curse of dimensionality”).
+<img width="979" height="631" alt="image" src="https://github.com/user-attachments/assets/f9dee027-14d2-4ac8-b9ac-791da0ccfcc7" />
+Cosine and Jaccard Distance Metrics in Clustering
 
-As model complexity increases, training error decreases, but test error may rise after a point (overfitting).
+This section introduces two less intuitive but highly useful distance metrics — Cosine Distance and Jaccard Distance — and explains when each should be used.
 
-<img width="1142" height="595" alt="image" src="https://github.com/user-attachments/assets/b033a6ce-7327-4c7b-a3a3-97c3a7569379" />
+1. Cosine Distance (or Cosine Similarity)
 
-The goal is to find the optimal balance — a model complex enough to capture patterns but simple enough to generalize.
+Focuses on the angle between vectors, not the magnitude (length).
 
-7. Summary
+Measures how similar two points are in direction, regardless of their scale or distance from the origin.
 
-Train/test split and cross-validation are essential to evaluate model performance fairly.
+Formula (for two vectors A and B):
 
-Avoid data leakage, watch for overfitting, and use appropriate validation to ensure the model performs well on truly unseen data.
-1. Training Data Workflow
+Cosine Similarity
+<img width="384" height="88" alt="image" src="https://github.com/user-attachments/assets/75158f19-e200-4ae6-9718-a3b82762d0cf" />
+→ Cosine Distance = 1 − Cosine Similarity
+Key Properties
 
-Training data includes X_train (features) and Y_train (labels).
+Insensitive to scale:
+Moving a point further from the origin (along the same line) does not change its cosine distance.
+→ Two points on the same ray from the origin have distance = 0.
 
-We fit a model to this data using the .fit() method (common in scikit-learn).
+Captures direction, not magnitude:
+Two points with proportional features (like 3× larger values) are treated as identical in orientation.
 
-The model learns parameters that describe the relationship between X and Y.
+Best for text or word-frequency data:
+Example:
 
-Example syntax structure:
+Document A: 3 counts of “data science”, 10 of “application”
 
-model.fit(X_train, Y_train)
+Document B: 30 of “data science”, 100 of “application”
+→ Cosine distance treats them as very similar because their ratio (direction) is the same.
 
+Advantage:
+Works well in high-dimensional spaces (like NLP or embeddings) where Euclidean distance loses interpretability due to the curse of dimensionality.
 
-After fitting, the model is ready to make predictions on unseen data.
+2. Jaccard Distance
 
-2. Testing Data Workflow
+Measures dissimilarity between sets.
 
-Use the test data (X_test) to check how well the model generalizes.
+Often used for text, keywords, or categorical data, where features are presence/absence-based.
 
-Pass X_test into the trained model to get predictions:
+Formula:<img width="359" height="84" alt="image" src="https://github.com/user-attachments/assets/c9339b48-0c91-4170-8faa-2e7da995c4ba" />
+→ The more overlap (shared elements), the smaller the distance.
 
-Y_pred = model.predict(X_test)
+Example:
+Sentence A: “I like chocolate ice cream”
+→ Set A = {I, like, chocolate, ice, cream}
+Sentence B: “Do I want chocolate cream or vanilla cream”
+→ Set B = {do, I, want, chocolate, cream, or, vanilla}
+Intersection = {I, chocolate, cream} (3 words)
+Union = 9 unique words
 
 
-Compare these predictions with the true labels Y_test.
-
-Evaluate the difference using an error metric (e.g., accuracy, MSE).
-
-This gives the test error, showing expected real-world performance.
-
-3. Using train_test_split in Python
-
-Import the function:
-
-from sklearn.model_selection import train_test_split
-
-
-Basic syntax:
-
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
-
-
-test_size=0.3 → 30% of data used for testing.
-
-Values between 0 and 1 represent proportions; integer values specify exact sample counts.
-
-4. Other Splitting Methods
-
-ShuffleSplit:
-
-Generates multiple random train/test splits.
-
-Useful for evaluating model stability across different subsets.
-
-StratifiedShuffleSplit:
-
-Ensures that class proportions remain consistent between training and testing sets.
-
-Important when dealing with imbalanced datasets (e.g., 99% non-cancer vs. 1% cancer).
-
-Maintains representative distribution across both splits.
-
-5. Key Takeaways
-
-Always separate training and testing data to evaluate generalization.
-
-Use train_test_split as the standard method in scikit-learn.
-
-For imbalanced data, prefer stratified splitting to avoid bias.
-
-The goal: simulate how the model performs on unseen, real-world data while preserving data integrity.
-
-Notes – Supervised Machine Learning (Part 7): Polynomial Regression & Model Complexity
-
-1. Overview/
-<img width="1022" height="527" alt="image" src="https://github.com/user-attachments/assets/690dec2b-406c-47f8-9c4d-83fd6e13023b" />
-
-
-Extends linear regression by introducing polynomial and interaction features.
-
-Goal: capture nonlinear relationships between variables while still using a linear model.
-
-This section connects polynomial regression with cross-validation and the bias–variance trade-off.
-
-2. Concept of Polynomial Regression
-
-Still based on linear regression, but we transform the input features.
-
-Example: instead of using only budget, we add new features like budget², budget³, or budget × runtime.
-
-The model remains linear in parameters — the equation is still a linear combination of all features (original + transformed).
-
-This helps model curved patterns in data (nonlinear effects).
-
-3. Creating Polynomial and Interaction Features
-
-Generate new variables using feature transformations:
-
-Squaring or cubing features.
-
-Multiplying features together to form interaction terms.
-
-These transformations can reveal relationships that simple linear regression misses.
-
-To manage complexity, use cross-validation to evaluate how added features affect performance on the holdout set.
-
-4. Implementation in Python (scikit-learn)
-
-Import and use PolynomialFeatures:
-
-from sklearn.preprocessing import PolynomialFeatures
-
-polyFeat = PolynomialFeatures(degree=2)
-X_poly = polyFeat.fit_transform(X)
-
-
-degree determines the maximum power (e.g., 2 → squared, 3 → cubic).
-
-Output includes:
-
-Original features.
-
-Squared/cubed features.
-
-Interaction terms (feature₁ × feature₂).
-
-5. Choosing the Right Functional Form
-
-Many possible transformations exist; selection depends on:
-
-Correlation or relationship with target variable.
-
-Domain knowledge — which interactions make sense.
-
-Empirical performance via cross-validation.
-
-Avoid adding unnecessary terms that increase complexity without improving predictive power.
-
-6. Link to Bias–Variance Trade-off
-
-Adding polynomial and interaction terms increases model complexity.
-
-Too simple → underfitting, misses real patterns.
-
-Too complex → overfitting, memorizes noise.
-
-Cross-validation helps identify the “sweet spot” between bias and variance.
-
-7. Broader Application
-
-This framework applies to all future models:
-
-Logistic Regression, KNN, Decision Trees, SVM, Random Forests, Ensembles, Deep Learning.
-
-Regardless of algorithm, the same principle remains:
-Balance complexity and generalization using transformations, validation, and regularization.
-
-8. Summary
-
-Polynomial regression = extending linear regression to model nonlinear effects.
-
-Still a linear model but with expanded feature space.
-
-Core takeaway: learn to control complexity through feature engineering and cross-validation — a foundation for all advanced ML models.
